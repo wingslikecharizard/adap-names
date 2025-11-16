@@ -22,14 +22,9 @@ export class StringName implements Name {
         const esc = ESCAPE_CHARACTER;
         const d = this.delimiter;
 
-        const parts = this.name.split(d);
-        const masked = parts.map(c =>
-            c
-                .replace(/\\/g, esc + esc)
-                .replace(new RegExp(`\\${d}`, "g"), esc + d)
-        );
-
-        return masked.join(DEFAULT_DELIMITER);
+        return this.name
+            .replace(/\\/g, esc + esc)          
+            .replace(new RegExp(`\\${d}`, "g"), esc + d);  
     }
 
     public getDelimiterCharacter(): string {
