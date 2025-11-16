@@ -8,51 +8,101 @@ export class StringName implements Name {
     protected noComponents: number = 0;
 
     constructor(source: string, delimiter?: string) {
-        throw new Error("needs implementation or deletion");
+        this.name = source;
+        if (delimiter)
+            this.delimiter = delimiter;
+        this.noComponents = source.split(this.delimiter).length;
     }
 
     public asString(delimiter: string = this.delimiter): string {
-        throw new Error("needs implementation or deletion");
+        return this.name.split(this.delimiter).join(delimiter);
     }
 
     public asDataString(): string {
-        throw new Error("needs implementation or deletion");
+        const esc = ESCAPE_CHARACTER;
+        const d = this.delimiter;
+
+        const parts = this.name.split(d);
+        const masked = parts.map(c =>
+            c
+                .replace(/\\/g, esc + esc)
+                .replace(new RegExp(`\\${d}`, "g"), esc + d)
+        );
+
+        return masked.join(DEFAULT_DELIMITER);
     }
 
     public getDelimiterCharacter(): string {
-        throw new Error("needs implementation or deletion");
+        return this.delimiter;
     }
 
     public isEmpty(): boolean {
-        throw new Error("needs implementation or deletion");
+        return this.name.length === 0;
     }
 
     public getNoComponents(): number {
-        throw new Error("needs implementation or deletion");
+        const parts = this.name.split(this.delimiter);
+        return parts.length;
     }
 
     public getComponent(x: number): string {
-        throw new Error("needs implementation or deletion");
+        const parts = this.name.split(this.delimiter);
+
+        if (x < 0 || x >= this.getNoComponents()) {
+            throw new Error(`Index ${x} out of bounds.`)
+        }
+
+        return parts[x];
     }
 
     public setComponent(n: number, c: string): void {
-        throw new Error("needs implementation or deletion");
+        const parts = this.name.split(this.delimiter);
+
+        if (n < 0 || n >= this.getNoComponents()) {
+            throw new Error(`Index ${n} out of bounds.`)
+        }
+
+        parts[n] = c; 
+        this.name = parts.join(this.delimiter);
     }
 
     public insert(n: number, c: string): void {
-        throw new Error("needs implementation or deletion");
+        const parts = this.name.split(this.delimiter);
+
+        if (n < 0 || n > parts.length) {
+            throw new Error(`Index ${n} out of bounds`);
+        }
+
+        parts.splice(n, 0, c);
+        this.name = parts.join(this.delimiter);
     }
 
     public append(c: string): void {
-        throw new Error("needs implementation or deletion");
+        if (this.isEmpty()) {
+            this.name = c;
+        } else {
+            this.name = this.name + this.delimiter + c;
+        }
     }
 
     public remove(n: number): void {
-        throw new Error("needs implementation or deletion");
+        const parts = this.name.split(this.delimiter);
+
+        if (n < 0 || n >= parts.length) {
+            throw new Error(`Index ${n} out of bounds`);
+        }
+
+        parts.splice(n, 1);
+        this.name = parts.join(this.delimiter);
     }
 
     public concat(other: Name): void {
-        throw new Error("needs implementation or deletion");
+        const otherStr = other.asString(this.delimiter);
+        if (this.isEmpty()) {
+            this.name = otherStr;
+        } else {
+            this.name = this.name + this.delimiter + otherStr;
+        }
     }
 
 }

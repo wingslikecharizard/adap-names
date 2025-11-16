@@ -7,51 +7,74 @@ export class StringArrayName implements Name {
     protected components: string[] = [];
 
     constructor(source: string[], delimiter?: string) {
-        throw new Error("needs implementation or deletion");
+        this.components = [...source];
+        if (delimiter)
+            this.delimiter = delimiter; 
     }
 
     public asString(delimiter: string = this.delimiter): string {
-        throw new Error("needs implementation or deletion");
+        return this.components.join(this.delimiter);
     }
 
     public asDataString(): string {
-        throw new Error("needs implementation or deletion");
+        const esc = ESCAPE_CHARACTER;
+        const d = this.delimiter;
+
+        const masked = this.components.map(c =>
+            c
+                .replace(/\\/g, esc + esc)             
+                .replace(new RegExp(`\\${d}`, "g"), esc + d) 
+        );
+        return masked.join(DEFAULT_DELIMITER);
     }
 
     public getDelimiterCharacter(): string {
-        throw new Error("needs implementation or deletion");
+        return this.delimiter;
     }
 
     public isEmpty(): boolean {
-        throw new Error("needs implementation or deletion");
+        return this.components.length === 0;
     }
 
     public getNoComponents(): number {
-        throw new Error("needs implementation or deletion");
+        return this.components.length;
     }
 
     public getComponent(i: number): string {
-        throw new Error("needs implementation or deletion");
+        if (i < 0 || i >= this.components.length)
+            throw new Error(`Index ${i} out of bounds`);
+
+        return this.components[i];
     }
 
     public setComponent(i: number, c: string): void {
-        throw new Error("needs implementation or deletion");
+        if (i < 0 || i >= this.components.length)
+            throw new Error(`Index ${i} out of bounds`);
+
+        this.components[i] = c;
     }
 
     public insert(i: number, c: string): void {
-        throw new Error("needs implementation or deletion");
+        if (i < 0 || i > this.components.length)
+            throw new Error(`Index ${i} out of bounds`);
+
+        this.components.splice(i, 0, c);
     }
 
     public append(c: string): void {
-        throw new Error("needs implementation or deletion");
+        this.components.push(c);
     }
 
     public remove(i: number): void {
-        throw new Error("needs implementation or deletion");
+        if (i < 0 || i >= this.components.length)
+            throw new Error(`Index ${i} out of bounds`);
+
+        this.components.splice(i, 1);
     }
 
     public concat(other: Name): void {
-        throw new Error("needs implementation or deletion");
+        for (let i = 0; i < other.getNoComponents(); i++) {
+            this.components.push(other.getComponent(i));
+        }
     }
-
 }
