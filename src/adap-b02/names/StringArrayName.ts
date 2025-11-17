@@ -18,13 +18,14 @@ export class StringArrayName implements Name {
 
     public asDataString(): string {
         const esc = ESCAPE_CHARACTER;
-        const d = this.delimiter;
+        const d = this.getDelimiterCharacter();
 
         const masked = this.components.map(c =>
             c
-                .replace(/\\/g, esc + esc)             
-                .replace(new RegExp(`\\${d}`, "g"), esc + d) 
+                .replace(/\\/g, ESCAPE_CHARACTER + ESCAPE_CHARACTER)             
+                .replace(new RegExp(`\\${d}`, "g"), ESCAPE_CHARACTER + d) 
         );
+
         return masked.join(DEFAULT_DELIMITER);
     }
 
