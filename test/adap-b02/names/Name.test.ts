@@ -151,9 +151,9 @@ describe("StringArrayName – concat", () => {
 // Additional tests for StringName
 
 describe("StringName – asDataString", () => {
-  it("escapes delimiter and backslashes", () => {
+  it("escapes only delimiters inside components, not separators", () => {
     const n = new StringName("a.b.c\\d");
-    expect(n.asDataString()).toBe("a\\.b\\.c\\\\d");
+    expect(n.asDataString()).toBe("a.b.c\\\\d");
   });
 });
 
@@ -242,5 +242,21 @@ describe("StringName – concat", () => {
     const n2 = new StringName("fau");
     n1.concat(n2);
     expect(n1.asString()).toBe("fau");
+  });
+});
+
+// Interchangeable test - asDataString outputs same for StringName and StringArrayName
+
+describe("Interchangeability – asDataString()", () => {
+  it("produces identical output for StringName and StringArrayName", () => {
+    const input = ["ab", "c\\d", "e"];
+
+    const n1 = new StringName(input.join("."));
+    const n2 = new StringArrayName(input);
+
+    const data1 = n1.asDataString();
+    const data2 = n2.asDataString();
+
+    expect(data1).toBe(data2);
   });
 });
