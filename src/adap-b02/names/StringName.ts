@@ -5,13 +5,15 @@ export class StringName implements Name {
 
     protected delimiter: string = DEFAULT_DELIMITER;
     protected name: string = "";
+    protected components: string[] = [];
     protected noComponents: number = 0;
 
     constructor(source: string, delimiter?: string) {
+        if (delimiter) this.delimiter = delimiter;
+
+        this.components = source.split(this.delimiter);
+        this.noComponents = this.components.length;
         this.name = source;
-        if (delimiter)
-            this.delimiter = delimiter;
-        this.noComponents = source.split(this.delimiter).length;
     }
 
     public asString(delimiter: string = this.delimiter): string {
@@ -19,12 +21,15 @@ export class StringName implements Name {
     }
 
     public asDataString(): string {
-        const esc = ESCAPE_CHARACTER;
         const d = this.delimiter;
 
-        return this.name
-            .replace(/\\/g, esc + esc)          
-            .replace(new RegExp(`\\${d}`, "g"), esc + d);  
+        const masked = this.components.map(c =>
+            c
+                .replace(/\\/g, ESCAPE_CHARACTER + ESCAPE_CHARACTER)              
+                .replace(new RegExp(`\\${d}`, "g"), ESCAPE_CHARACTER + d) 
+        );
+
+        return masked.join(DEFAULT_DELIMITER);
     }
 
     public getDelimiterCharacter(): string {
