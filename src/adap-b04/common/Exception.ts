@@ -15,6 +15,12 @@ export abstract class Exception extends Error {
         }
     }
 
+    public static assert(condition: boolean, message?: string): void {
+        if (!condition) {
+            throw new (this as any)(message);
+        }
+    }
+
     public hasTrigger(): boolean {
         return this.trigger != null;
     }
