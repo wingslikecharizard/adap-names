@@ -1,0 +1,5 @@
+export enum ExceptionType {
+    PRECONDITION = "PRECONDITION",
+    POSTCONDITION = "POSTCONDITION",
+    INVARIANT = "INVARIANT"
+}
