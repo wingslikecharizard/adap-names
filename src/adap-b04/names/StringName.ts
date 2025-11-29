@@ -1,71 +1,96 @@
-import { DEFAULT_DELIMITER, ESCAPE_CHARACTER } from "../common/Printable";
+import { DEFAULT_DELIMITER } from "../common/Printable";
+import { ExceptionType } from "../common/ExceptionType";
+import { AssertionDispatcher } from "../common/AssertionDispatcher";
 import { Name } from "./Name";
 import { AbstractName } from "./AbstractName";
 
 export class StringName extends AbstractName {
 
     protected name: string = "";
-    protected noComponents: number = 0;
 
-    constructor(source: string, delimiter?: string) {
-        super();
-        throw new Error("needs implementation or deletion");
-    }
-
-    public clone(): Name {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public asString(delimiter: string = this.delimiter): string {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public asDataString(): string {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public isEqual(other: Name): boolean {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public getHashCode(): number {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public isEmpty(): boolean {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public getDelimiterCharacter(): string {
-        throw new Error("needs implementation or deletion");
+    constructor(source: string, delimiter: string = DEFAULT_DELIMITER) {
+        super(delimiter);
+        this.name = source;
     }
 
     public getNoComponents(): number {
-        throw new Error("needs implementation or deletion");
+        this.assertInvariant();
+
+        const result = this.getNoComponentsInternal();
+
+        this.assertInvariant();
+        return result;
     }
 
     public getComponent(i: number): string {
-        throw new Error("needs implementation or deletion");
+        this.assertInvariant();
+        this.assertValidIndex(i, false, ExceptionType.PRECONDITION);
+
+        const value = this.getComponentInternal(i);
+
+        this.assertIsValidNamePart(value, ExceptionType.POSTCONDITION);
+        this.assertInvariant();
+
+        return value;
     }
 
-    public setComponent(i: number, c: string) {
-        throw new Error("needs implementation or deletion");
+    public setComponent(i: number, c: string): void {
+        this.assertInvariant();
+        this.assertValidIndex(i, false, ExceptionType.PRECONDITION);
+        this.assertIsValidNamePart(c, ExceptionType.PRECONDITION);
+
+        const parts = this.name === "" ? [] : this.name.split(this.delimiter);
+        parts[i] = c;
+        this.name = parts.join(this.delimiter);
+
+        this.assertIsValidNamePart(this.getComponentInternal(i), ExceptionType.POSTCONDITION);
+        this.assertInvariant();
     }
 
-    public insert(i: number, c: string) {
-        throw new Error("needs implementation or deletion");
+    public insert(i: number, c: string): void {
+        this.assertInvariant();
+        this.assertValidIndex(i, true, ExceptionType.PRECONDITION);
+        this.assertIsValidNamePart(c, ExceptionType.PRECONDITION);
+
+        const parts = this.name === "" ? [] : this.name.split(this.delimiter);
+        parts.splice(i, 0, c);
+        this.name = parts.join(this.delimiter);
+
+        this.assertIsValidNamePart(this.getComponentInternal(i), ExceptionType.POSTCONDITION);
+        this.assertInvariant();
     }
 
-    public append(c: string) {
-        throw new Error("needs implementation or deletion");
+    public append(c: string): void {
+        const end = this.getNoComponentsInternal();
+        this.insert(end, c);
     }
 
-    public remove(i: number) {
-        throw new Error("needs implementation or deletion");
+    public remove(i: number): void {
+        this.assertInvariant();
+        this.assertValidIndex(i, false, ExceptionType.PRECONDITION);
+
+        const parts = this.name === "" ? [] : this.name.split(this.delimiter);
+        parts.splice(i, 1);
+        this.name = parts.join(this.delimiter);
+
+        this.assertInvariant();
     }
 
-    public concat(other: Name): void {
-        throw new Error("needs implementation or deletion");
+    public clone(): Name {
+        this.assertInvariant();
+        const result = new StringName(this.name, this.delimiter);
+        this.assertInvariant();
+        return result;
+    }
+
+    protected getNoComponentsInternal(): number {
+        if (this.name.length === 0) return 0;
+        return this.name.split(this.delimiter).length;
+    }
+
+    protected getComponentInternal(i: number): string {
+        const parts = this.name.split(this.delimiter);
+        return parts[i];
     }
 
 }
