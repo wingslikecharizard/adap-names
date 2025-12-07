@@ -34,8 +34,8 @@ function createFileSystem(): RootNode {
 describe("Basic naming test", () => {
   it("test name checking", () => {
     let fs: RootNode = createFileSystem();
-    // let ls: Node = [...fs.findNodes("ls")][0];
-    // expect(ls.getFullName().asString()).toBe(new StringName("/usr/bin/ls", '/'));
+    let ls: Node = [...fs.findNodes("ls")][0];
+    expect(ls.getFullName().asString()).toBe("/usr/bin/ls");
   });
 });
 
@@ -66,11 +66,11 @@ describe("Buggy setup test", () => {
       fs.findNodes("ls");
     } catch(er) {
       threwException = true;
-      // let ex: Exception = er as Exception;
-      // expect(ex).toBeInstanceOf(ServiceFailureException);
-      // expect(ex.hasTrigger()).toBe(true);
-      // let tx: Exception = ex.getTrigger();
-      // expect(tx).toBeInstanceOf(InvalidStateException);
+      let ex: Exception = er as Exception;
+      expect(ex).toBeInstanceOf(ServiceFailureException);
+      expect(ex.hasTrigger()).toBe(true);
+      let tx: Exception = ex.getTrigger();
+      expect(tx).toBeInstanceOf(InvalidStateException);
     }
     expect(threwException).toBe(true);
   });

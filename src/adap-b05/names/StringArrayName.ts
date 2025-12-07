@@ -1,69 +1,124 @@
-import { DEFAULT_DELIMITER, ESCAPE_CHARACTER } from "../common/Printable";
-import { Name } from "./Name";
+import { DEFAULT_DELIMITER } from "../common/Printable";
 import { AbstractName } from "./AbstractName";
+import { Name } from "./Name";
+
+import { ExceptionType } from "../common/ExceptionType";
+import { AssertionDispatcher } from "../common/AssertionDispatcher";
 
 export class StringArrayName extends AbstractName {
 
-    protected components: string[] = [];
+  protected components: string[] = [];
 
-    constructor(source: string[], delimiter?: string) {
-        super();
-        throw new Error("needs implementation or deletion");
+  constructor(source: string[], delimiter: string = DEFAULT_DELIMITER) {
+    super(delimiter);
+
+    AssertionDispatcher.dispatch(
+      ExceptionType.PRECONDITION,
+      source === null || source === undefined,
+      "source array must not be null or undefined"
+    );
+
+    for (const part of source) {
+      this.assertIsValidNamePart(part, ExceptionType.PRECONDITION);
     }
 
-    public clone(): Name {
-        throw new Error("needs implementation or deletion");
-    }
+    this.components = [...source];
 
-    public asString(delimiter: string = this.delimiter): string {
-        throw new Error("needs implementation or deletion");
-    }
+    this.assertInvariant();
+  }
 
-    public asDataString(): string {
-        throw new Error("needs implementation or deletion");
-    }
+  public getNoComponents(): number {
+      this.assertInvariant();
 
-    public isEqual(other: Name): boolean {
-        throw new Error("needs implementation or deletion");
-    }
+      const result = this.getNoComponentsInternal();
 
-    public getHashCode(): number {
-        throw new Error("needs implementation or deletion");
-    }
+      this.assertInvariant();
+      return result;
+  }
 
-    public isEmpty(): boolean {
-        throw new Error("needs implementation or deletion");
-    }
+  protected getNoComponentsInternal(): number {
+    return this.components.length;
+  }
+  
+  public getComponent(i: number): string {
+    this.assertValidIndex(i, false, ExceptionType.PRECONDITION);
 
-    public getDelimiterCharacter(): string {
-        throw new Error("needs implementation or deletion");
-    }
+    const result = this.components[i];
 
-    public getNoComponents(): number {
-        throw new Error("needs implementation or deletion");
-    }
+    this.assertIsValidNamePart(result, ExceptionType.POSTCONDITION);
 
-    public getComponent(i: number): string {
-        throw new Error("needs implementation or deletion");
-    }
+    return result;
+  }
 
-    public setComponent(i: number, c: string) {
-        throw new Error("needs implementation or deletion");
-    }
+    protected getComponentInternal(i: number): string {
+    return this.components[i];
+  }
 
-    public insert(i: number, c: string) {
-        throw new Error("needs implementation or deletion");
-    }
+  public setComponent(i: number, c: string): void {
+    this.assertValidIndex(i, false, ExceptionType.PRECONDITION);
+    this.assertIsValidNamePart(c, ExceptionType.PRECONDITION);
 
-    public append(c: string) {
-        throw new Error("needs implementation or deletion");
-    }
+    this.components[i] = c;
 
-    public remove(i: number) {
-        throw new Error("needs implementation or deletion");
-    }
+    this.assertIsValidNamePart(
+      this.getComponentInternal(i),
+      ExceptionType.POSTCONDITION
+    );
 
-    public concat(other: Name): void {
-        throw new Error("needs implementation or deletion");
-    }
+    this.assertInvariant();
+  }
+
+  public insert(i: number, c: string): void {
+    this.assertValidIndex(i, true, ExceptionType.PRECONDITION);
+
+    this.assertIsValidNamePart(c, ExceptionType.PRECONDITION);
+
+    this.components.splice(i, 0, c);
+
+    this.assertIsValidNamePart(
+      this.getComponentInternal(i),
+      ExceptionType.POSTCONDITION
+    );
+
+    this.assertInvariant();
+  }
+
+  public append(c: string): void {
+    this.assertIsValidNamePart(c, ExceptionType.PRECONDITION);
+
+    this.components.push(c);
+
+    this.assertIsValidNamePart(
+      this.getComponentInternal(this.components.length - 1),
+      ExceptionType.POSTCONDITION
+    );
+
+    this.assertInvariant();
+  }
+
+  public remove(i: number): void {
+    this.assertValidIndex(i, false, ExceptionType.PRECONDITION);
+
+    this.components.splice(i, 1);
+
+    AssertionDispatcher.dispatch(
+      ExceptionType.POSTCONDITION,
+      this.getNoComponents() < 0,
+      "postcondition violated after remove"
+    );
+
+    this.assertInvariant();
+  }
+
+  public clone(): Name {
+    const copy = new StringArrayName([...this.components], this.delimiter);
+
+    AssertionDispatcher.dispatch(
+      ExceptionType.POSTCONDITION,
+      !this.isEqual(copy),
+      "clone must be equal to original"
+    );
+
+    return copy;
+  }
 }

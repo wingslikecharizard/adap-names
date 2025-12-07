@@ -1,3 +1,5 @@
+import { InvalidStateException } from "./InvalidStateException";
+
 /**
  * Root class for exceptions in ADAP examples
  */
@@ -10,6 +12,12 @@ export abstract class Exception extends Error {
 
         if (t != undefined) {
             this.trigger = t;
+        }
+    }
+
+    public static assert(condition: boolean, message?: string): void {
+        if (!condition) {
+            throw new (this as any)(message);
         }
     }
 
