@@ -39,7 +39,7 @@ export class StringName extends AbstractName {
         this.assertValidIndex(i, false, ExceptionType.PRECONDITION);
         this.assertIsValidNamePart(c, ExceptionType.PRECONDITION);
 
-        const parts = this.name === "" ? [] : this.name.split(this.delimiter);
+        const parts = this.name === "" ? [""] : this.name.split(this.delimiter);
         parts[i] = c;
         this.name = parts.join(this.delimiter);
 
@@ -52,7 +52,7 @@ export class StringName extends AbstractName {
         this.assertValidIndex(i, true, ExceptionType.PRECONDITION);
         this.assertIsValidNamePart(c, ExceptionType.PRECONDITION);
 
-        const parts = this.name === "" ? [] : this.name.split(this.delimiter);
+        const parts = this.name === "" ? [""] : this.name.split(this.delimiter);
         parts.splice(i, 0, c);
         this.name = parts.join(this.delimiter);
 
@@ -69,9 +69,9 @@ export class StringName extends AbstractName {
         this.assertInvariant();
         this.assertValidIndex(i, false, ExceptionType.PRECONDITION);
 
-        const parts = this.name === "" ? [] : this.name.split(this.delimiter);
+        const parts = this.name === "" ? [""] : this.name.split(this.delimiter);
         parts.splice(i, 1);
-        this.name = parts.join(this.delimiter);
+        this.name = parts.length === 0 ? "" : parts.join(this.delimiter);
 
         this.assertInvariant();
     }
@@ -84,13 +84,16 @@ export class StringName extends AbstractName {
     }
 
     protected getNoComponentsInternal(): number {
-        if (this.name.length === 0) return 0;
+        if (this.name.length === 0) return 1;
         return this.name.split(this.delimiter).length;
     }
 
     protected getComponentInternal(i: number): string {
+        if (this.name === "") {
+            return "";
+        }
+        
         const parts = this.name.split(this.delimiter);
         return parts[i];
     }
-
 }

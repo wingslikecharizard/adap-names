@@ -49,19 +49,10 @@ export class Node {
     }
 
     public getFullName(): Name {
-        const parentName = this.parentNode.getFullName();
-        const delim = parentName.getDelimiterCharacter();   
-        const parentStr = parentName.asString();            
-        const base = this.getBaseName();
-
-        let full: string;
-        if (parentStr === "/" || parentStr === "") {
-            full = "/" + base;
-        } else {
-            full = parentStr + delim + base;
-        }
-
-        return new StringName(full, delim);
+        const baseName = this.getBaseName();
+        const result: Name = this.parentNode.getFullName();
+        result.append(baseName);
+        return result;
     }
 
     public getBaseName(): string {
