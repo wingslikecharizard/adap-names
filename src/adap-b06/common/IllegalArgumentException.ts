@@ -6,13 +6,14 @@ import { InvalidStateException } from "./InvalidStateException";
  * In other words, a method precondition failed.
  */
 export class IllegalArgumentException extends Exception {
-
-    public static assert(c: boolean, m: string = "illegal argument", t?: Exception): void {
-        if (!c) throw new IllegalArgumentException(m, t);
-    }
     
     constructor(m: string, t?: Exception) {
         super(m, t);
+    }
+
+    public getTrigger(): Exception {
+        InvalidStateException.assert(this.hasTrigger());
+        return super.getTrigger();
     }
 
 }

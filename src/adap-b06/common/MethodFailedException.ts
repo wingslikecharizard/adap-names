@@ -5,10 +5,6 @@ import { Exception } from "./Exception";
  * In other words, a postcondition failed.
  */
 export class MethodFailedException extends Exception {
-  
-    public static assert(c: boolean, m: string = "method failed", t?: Exception): void {
-        if (!c) throw new MethodFailedException(m, t);
-    }
 
     constructor(m: string, t?: Exception) {
         super(m, t);
